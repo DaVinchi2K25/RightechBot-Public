@@ -6,7 +6,7 @@ import telebot
 import requests
 from headers import headers
 
-bot = telebot.TeleBot('1781434104:AAHH-jK64eMbNmW72_f_Fln77xNz0-VeCzA');
+bot = telebot.TeleBot('');
 
 
 def start_process():

@@ -4,12 +4,12 @@ from time import sleep
 
 import telebot
 import requests
-from headers import headers
+from headers import headers  # получение заголовков для работы с API Rightech IoT
 
-bot = telebot.TeleBot('');
+bot = telebot.TeleBot('')  # инициализация бота
 
 
-def start_process():
+def start_process():  # функция для запуска отдельного потока
     p1 = Process(target=send_msg, args=())
     p1.start()
 
@@ -19,10 +19,10 @@ def send_msg():
     while True:
         contents = json.loads(
             requests.get("http://sandbox.rightech.io/api/v1/messages",
-                         headers=headers).text)
-        requests.delete("http://sandbox.rightech.io/api/v1/messages/clear", headers=headers)
+                         headers=headers).text)  # получение списка сообщений
+        requests.delete("http://sandbox.rightech.io/api/v1/messages/clear", headers=headers)  # очистка списка сообщений
         objects = json.loads(requests.get("http://sandbox.rightech.io/api/v1/objects/",
-                                          headers=headers).text)
+                                          headers=headers).text)  # получение списка объектов
         if contents:
             if last_msg_time != int(contents[0]['time']):
                 last_msg_time = int(contents[0]['time'])
@@ -38,10 +38,10 @@ def send_msg():
                         s_msg += "<b>Информационное</b>"
                     s_msg += "\n" + message['message-body']
                     members = open('members.txt')
-                    while True:
+                    while True: # отправка сообщения поьзователям
                         user = members.readline()
                         if not user: break
-                        bot.send_message(user, s_msg, parse_mode="HTML")
+                        bot.send_message(user, s_msg)
         sleep(1)
 
 

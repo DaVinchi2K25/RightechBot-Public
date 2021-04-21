@@ -4,9 +4,9 @@ from time import sleep
 
 import telebot
 import requests
-from headers import headers
+from headers import headers  # получение из файла headers.py заголовков для работы с API Rightech IoT
 
-bot = telebot.TeleBot('1781434104:AAHH-jK64eMbNmW72_f_Fln77xNz0-VeCzA');
+bot = telebot.TeleBot('1781434104:AAHH-jK64eMbNmW72_f_Fln77xNz0-VeCzA')  # инициализация бота с токеном
 
 
 def start_process():
@@ -19,10 +19,10 @@ def send_msg():
     while True:
         contents = json.loads(
             requests.get("http://sandbox.rightech.io/api/v1/messages",
-                         headers=headers).text)
-        requests.delete("http://sandbox.rightech.io/api/v1/messages/clear",headers=headers)
+                         headers=headers).text) # получение списка сообщений
+        requests.delete("http://sandbox.rightech.io/api/v1/messages/clear", headers=headers) # очистка списка сообщений
         objects = json.loads(requests.get("http://sandbox.rightech.io/api/v1/objects/",
-                                          headers=headers).text)
+                                          headers=headers).text) # получение списка объектов
         if contents:
             if last_msg_time != int(contents[0]['time']):
                 last_msg_time = int(contents[0]['time'])

@@ -4,9 +4,9 @@ from time import sleep
 
 import telebot
 import requests
-from headers import headers  # получение из файла headers.py заголовков для работы с API Rightech IoT
+from headers import headers
 
-bot = telebot.TeleBot('1781434104:AAHH-jK64eMbNmW72_f_Fln77xNz0-VeCzA')  # инициализация бота с токеном
+bot = telebot.TeleBot('');
 
 
 def start_process():
@@ -19,10 +19,10 @@ def send_msg():
     while True:
         contents = json.loads(
             requests.get("http://sandbox.rightech.io/api/v1/messages",
-                         headers=headers).text) # получение списка сообщений
-        requests.delete("http://sandbox.rightech.io/api/v1/messages/clear", headers=headers) # очистка списка сообщений
+                         headers=headers).text)
+        requests.delete("http://sandbox.rightech.io/api/v1/messages/clear", headers=headers)
         objects = json.loads(requests.get("http://sandbox.rightech.io/api/v1/objects/",
-                                          headers=headers).text) # получение списка объектов
+                                          headers=headers).text)
         if contents:
             if last_msg_time != int(contents[0]['time']):
                 last_msg_time = int(contents[0]['time'])
@@ -47,16 +47,21 @@ def send_msg():
 
 @bot.message_handler(content_types=['text'])
 def get_text_messages(message):
-    if message.text == "Привет":
-        bot.send_message(message.from_user.id, "Привет, чем я могу тебе помочь?")
-    elif message.text == "/help":
-        bot.send_message(message.from_user.id, "Напиши привет")
-    elif message.text == "/start":
+    if message.text == "/start":
         open('members.txt', 'a').write(str(message.from_user.id) + '\n')
         bot.send_message(message.from_user.id, "Бот активирован, все сообщения с платформы Rightech IoT будут "
                                                "пересылаться сюда, приятного использования")
+    elif message.text == "/stop":
+        members_w = ''
+        members = open('members.txt', 'r').readlines()
+        for member in members:
+            if member.replace('\n', '') != str(message.from_user.id):
+                members_w += member.replace('\n', '') + '\n'
+        open('members.txt', 'w').write(members_w)
+        bot.send_message(message.from_user.id, "Бот деактивирован")
     else:
-        bot.send_message(message.from_user.id, "Я тебя не понимаю. Напиши /help.")
+        bot.send_message(message.from_user.id,
+                         'Чтобы активировать бота напишите /start,\n чтобы деактивировать бота напишите /stop.')
 
 
 start_process()
